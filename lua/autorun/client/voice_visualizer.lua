@@ -1,71 +1,7 @@
-/*
- *   VOICE
- *     VISUALIZER 1.3
- *        by Freaky
- *
- *   Version 1.3b
- *      - Fixed another lua error (Hopefully there are all gone now...)
- *
- *   Version 1.3a
- *      - Fixed lua error (should work for TTT now)
- *
- *   Version 1.3
- *      - Tested: Stronghold Compatiblity
- *      - Should now work with every gamemode though
- *        Even if the gamemode creates their own VoicePanel
- *      - Fixed a Bug
- *      - Added vv.CallGamemodePaintFunc (bool)
- *      - Added vv.CallGamemodePaintFuncFirst (bool)
- *
- *      [ Personal comment: I do not like these 2 settings
-          But I did not know how I can do it differently..
-          Maybe I will add something like
-                vv.IsStronghold
-                vv.IsTTT
-                vv.IsSandbox
-            Leave a comment in the forums ]
- *
- *
- *   Version 1.2
- *      - Will now also work in TTT
- *      - Added some TTT Tutorials / Tips
- *
- *   Version 1.1
- *      - Code is now much smaller
- *      - Fixed panel being displayed twice
- *
- *   Version 1.0
- *      - Initial Release
- *
- *
- *   THANK YOU FOR DOWNLOADING !
- *
- *   CURRENTLY COMPATIBLE
- *   [
-            Sandbox (working without changes)
-            TTT (see forums)
-            DarkRP (working without changes)
-            Stronghold (working without changes)
-     ]
-     
-     In some GameModes you have to change some config settings.
-     If you need ANY help, contact me in Steam.
-     * Name to Add: fre4kpwned *
-     You can also leave a message on the forums (facepunch)
-     Name: freakyy
-     
-    Please do not upload anywhere else (except facepunch/mediafire).
- *
- */
 // Code based on Garry's Base Gamemode
 vv = {}
 local PANEL = {}
 local PlayerVoicePanels = {}
-/*
- * CONFIG
- *       You can change stuff here
- */
-
 // Color
 vv.BarColor = {
     [0] = Color(255, 0, 0), -- Over 0% -> Red
@@ -73,32 +9,34 @@ vv.BarColor = {
     [50] = Color(0, 255, 0) -- Over 50% -> Green
 }
 
+
+
 // Adjust Bar Height
 -- This is a PERFECT setting - Be sure before changing it
 -- Default: 40
-vv.BarHeightMultiplier = 40
+vv.BarHeightMultiplier = CreateClientConVar("vv_bar_height", "40", true, false, "Adjust Bar Height")
 
 // Update Rate
 -- If you want it faster, increase the rate
 -- If you want it slower, decrease the rate
 -- Default: 0.1
-vv.UpdateRate = 0.1
+vv.UpdateRate = CreateClientConVar("vv_update_rate", "0.1", true, false, "Update Rate\nIf you want it faster, increase the rate\nIf you want it slower, decrease the rate")
 
 // Single Bar Width
 -- If you want more bars, decrease the value
 -- and increase the Bar Count
 -- Default: 5
-vv.SingleBarWidth = 5
+vv.SingleBarWidth = CreateClientConVar("vv_bar_width", "5", true, false, "Single Bar Width")
 
 // Bar Count
 -- How many bars do you want to be displayed?
 -- Default: 30 (Perfect setting with bar width 5)
-vv.BarCount = 30
+vv.BarCount = CreateClientConVar("vv_bar_count", "30", true, false, "Bar Count")
 
 // Bar Distance
 -- Distance between 2 Bars
 -- Default: 2
-vv.BarDistance = 2
+vv.BarDistance = CreateClientConVar("vv_bar_distance", "2", true, false, "Distance between Bars")
 
 // Background Color
 -- Background Color of the bar itself
@@ -132,7 +70,7 @@ end
 -- for example: If your gamemode draws a box, it will draw over the bar and stuff
 -- That would not be good
 -- Default: false (you should keep it that way)
-vv.CallGamemodePaintFunc = false
+vv.CallGamemodePaintFunc = CreateClientConVar("vv_call_gm_paint_func", "0", true, false, "Call Gamemode Paint function\nI highly recommend this stays turned off\nfor example: If your gamemode draws a box, it will draw over the bar and stuff. That would not be good")
 
 // Gamemode Paint Function call
 -- You have to test this function out on your gamemode
@@ -140,8 +78,7 @@ vv.CallGamemodePaintFunc = false
 -- Again, test it out yourself
 -- NOTE: If you have set vv.CallGamemodePaintFunc to false, this will be ignored!
 -- Default: false
-vv.CallGamemodePaintFuncFirst = false
-
+vv.CallGamemodePaintFuncFirst = CreateClientConVar("vv_call_gm_paint_func_first", "0", true, false, "Gamemode Paint Function call\nThis sets wether the gamemode paint function should be called before (true) or after (false) my paint function\nNOTE: If you have set 'vv_call_gm_paint_func' to '0', this will be ignored!")
 /* 
  * DO NOT EDIT ANYTHING FROM HERE !
  */
@@ -167,7 +104,7 @@ function PANEL:Setup(ply)
 	self.Avatar:SetPlayer(ply)
 	
 	self.Color = team.GetColor(ply:Team())
-    timer.Create("PanelThink" .. ply:UniqueID(), vv.UpdateRate, 0, function()
+    timer.Create("PanelThink" .. ply:UniqueID(), vv.UpdateRate:GetFloat(), 0, function()
         if self:Valid() then
             if self.UpdatePast ~= nil then
                 self:UpdatePast()
@@ -187,14 +124,14 @@ function PANEL:Setup(ply)
                     if s ~= nil then
                         if s:Valid() then
                             -- Idiots
-                            if PaintFunc ~= nil and vv.CallGamemodePaintFunc and vv.CallGamemodePaintFuncFirst == true then
+                            if PaintFunc ~= nil and vv.CallGamemodePaintFunc:GetBool() and vv.CallGamemodePaintFuncFirst:GetBool() == true then
                                 PaintFunc(s,w,h)
                             end
                             
                             s:VVPaint(w, h)
                             
                             -- Idiots
-                            if PaintFunc ~= nil and vv.CallGamemodePaintFunc and vv.CallGamemodePaintFuncFirst == false then
+                            if PaintFunc ~= nil and vv.CallGamemodePaintFunc:GetBool() and vv.CallGamemodePaintFuncFirst:GetBool() == false then
                                 PaintFunc(s,w,h)
                             end
                         end
@@ -210,7 +147,7 @@ function PANEL:UpdatePast()
         table.insert(self.Past, self.ply:VoiceVolume())
         
         local len = #self.Past
-        if len > (vv.BarCount-1) then
+        if len > (vv.BarCount:GetInt()-1) then
             table.remove(self.Past, 1)
         end
     end
@@ -233,10 +170,10 @@ function PANEL:VVPaint(w, h)
 	draw.RoundedBox(4, 0, 0, w, h, vv.BackgroundColor(self, self.ply))
     
     for i,v in pairs(self.Past) do
-        local barh = v * vv.BarHeightMultiplier
+        local barh = v * vv.BarHeightMultiplier:GetFloat()
         local barcolor = self:GetBarColor(v * 100)
         surface.SetDrawColor(barcolor)
-        surface.DrawRect(35 + i * (vv.BarDistance + vv.SingleBarWidth), 36 - barh, vv.SingleBarWidth, barh)
+        surface.DrawRect(35 + i * (vv.BarDistance:GetFloat() + vv.SingleBarWidth:GetFloat()), 36 - barh, vv.SingleBarWidth:GetFloat(), barh)
     end
     
     -- Draw Name
