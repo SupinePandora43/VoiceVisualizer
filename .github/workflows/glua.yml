@@ -1,10 +1,9 @@
-name: Python package
+name: Glua
 
 on: [push]
 
 jobs:
   build:
-    name: glualint
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -16,4 +15,4 @@ jobs:
         unzip glualint-1.11.2-linux.zip
     - name: Run glualint
       run: |
-        glualint
+        ./glualint
