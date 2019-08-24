@@ -5,9 +5,9 @@ local PlayerVoicePanels = {}
 
 -- Color
 vv.BarColor = {
-  [0]  = Color(0  , 255, 0)  -- Low amplitude 0% -> Green
+  [0]  = Color(0  , 255, 0), -- Low amplitude 0% -> Green
   [25] = Color(255, 255, 0), -- Middle amplitude 25 % -> Yellow
-  [50] = Color(255,   0, 0), -- High amplitude 50% -> Red
+  [50] = Color(255,   0, 0)  -- High amplitude 50% -> Red
 }
 
 -- Adjust Bar Height
