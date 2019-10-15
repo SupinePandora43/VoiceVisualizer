@@ -1,7 +1,7 @@
 {
-    "lint_maxScopeDepth":               7,
+    "lint_maxScopeDepth":               10,
     "lint_syntaxErrors":                true,
-    "lint_syntaxInconsistencies":       true,
+    "lint_syntaxInconsistencies":       false,
     "lint_deprecated":                  true,
     "lint_trailingWhitespace":          false,
     "lint_whitespaceStyle":             false,
