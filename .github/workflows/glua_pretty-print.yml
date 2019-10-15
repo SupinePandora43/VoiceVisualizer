@@ -2,7 +2,7 @@ name: Glua Pretty-Print
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '*/* 24 * * *'
+    - cron:  '*/5 * * * *'
 jobs:
   lint-pretty-print:
     name: pretty-print
