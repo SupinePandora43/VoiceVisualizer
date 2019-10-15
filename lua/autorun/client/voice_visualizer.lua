@@ -105,7 +105,7 @@ function PANEL:Setup(ply)
 
   self.Color = team.GetColor(ply:Team())
     timer.Create("PanelThink" .. ply:UniqueID(), vv.UpdateRate:GetFloat(), 0, function()
-        if self:Valid() then
+        if self:IsValid() then
             if self.UpdatePast ~= nil then
                 self:UpdatePast()
             end
@@ -117,12 +117,12 @@ function PANEL:Setup(ply)
     -- wow.. This is for the shitty gamemodes that overwrite my paint function -.-
     timer.Simple(0, function()
         if self ~= nil then
-            if self:Valid() then
+            if self:IsValid() then
                 local PaintFunc = self.Paint
 
                 self.Paint = function(s, w, h)
                     if s ~= nil then
-                        if s:Valid() then
+                        if s:IsValid() then
                             -- Idiots
                             if PaintFunc ~= nil and vv.CallGamemodePaintFunc:GetBool() and vv.CallGamemodePaintFuncFirst:GetBool() == true then
                                 PaintFunc(s,w,h)
@@ -143,7 +143,7 @@ function PANEL:Setup(ply)
 end
 
 function PANEL:UpdatePast()
-    if self ~= nil and self:Valid() then
+    if self ~= nil and self:IsValid() then
         table.insert(self.Past, self.ply:VoiceVolume())
 
         local len = #self.Past
@@ -166,7 +166,7 @@ function PANEL:GetBarColor(p)
 end
 
 function PANEL:VVPaint(w, h)
-  if not IsValid(self.ply) or not self:Valid() then return end
+  if not IsValid(self.ply) or not self:IsValid() then return end
   draw.RoundedBox(4, 0, 0, w, h, vv.BackgroundColor(self, self.ply))
 
     for i,v in pairs(self.Past) do
@@ -186,7 +186,7 @@ function PANEL:VVPaint(w, h)
 end
 
 function PANEL:Think()
-    if self:Valid() then
+    if self:IsValid() then
         if self.fadeAnim then
             self.fadeAnim:Run()
         end
