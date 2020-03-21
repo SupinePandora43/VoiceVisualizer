@@ -1,4 +1,7 @@
-if SERVER then AddCSLuaFile() return end
+if SERVER then
+    AddCSLuaFile()
+    return
+end
 local PANEL = {}
 local PlayerVoicePanels = {}
 function PANEL:Init()
@@ -19,23 +22,22 @@ function PANEL:Setup(ply)
     self:InvalidateLayout()
 end
 function PANEL:Paint(w, h)
-	if self ~= nil and self:IsValid() then
+    if self ~= nil and self:IsValid() then
         table.insert(self.Past, self.ply:VoiceVolume())
         local len = #self.Past
         if len > (42 - 1) then table.remove(self.Past, 1) end
-	end
+    end
     if not self then return end
     if not IsValid(self.ply) or not self:IsValid() then return end
     draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0))
     for i, v in pairs(self.Past) do
         local barh = v * 40
-		surface.SetDrawColor(self:GetBarColor(v * 100))
-        surface.DrawRect(35 + i * 5,
-                         36 - barh, 5, barh)
+        surface.SetDrawColor(self:GetBarColor(v * 100))
+        surface.DrawRect(35 + i * 5, 36 - barh, 5, barh)
     end
     surface.SetFont("GModNotify")
-    local w, h = surface.GetTextSize(self.ply:Nick())
-    surface.SetTextColor(Color(255,255,255))
+    local _, h = surface.GetTextSize(self.ply:Nick())
+    surface.SetTextColor(Color(255, 255, 255))
     surface.SetTextPos(40, 40 / 2 - h / 2)
     surface.DrawText(self.ply:Nick())
 end
@@ -54,7 +56,8 @@ function PANEL:Think()
     if self:IsValid() then if self.fadeAnim then self.fadeAnim:Run() end end
 end
 function PANEL:FadeOut(anim, delta, data)
-    if anim.Finished then
+	self:SetAlpha(255 - (255 * delta*50))
+	if anim.Finished then
         if IsValid(PlayerVoicePanels[self.ply]) then
             PlayerVoicePanels[self.ply]:Remove()
             PlayerVoicePanels[self.ply] = nil
@@ -62,6 +65,6 @@ function PANEL:FadeOut(anim, delta, data)
         end
         return
     end
-    self:SetAlpha(255 - (255 * (delta * 50)))
 end
 derma.DefineControl("VoiceNotify", "", PANEL, "DPanel")
+PANEL = nil
