@@ -22,24 +22,22 @@ function PANEL:Setup(ply)
     self:InvalidateLayout()
 end
 function PANEL:Paint(w, h)
-    if self ~= nil and self:IsValid() then
-        table.insert(self.Past, self.ply:VoiceVolume())
-        local len = #self.Past
-        if len > (42 - 1) then table.remove(self.Past, 1) end
-    end
-    if not self then return end
-    if not IsValid(self.ply) or not self:IsValid() then return end
-    draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0))
-    for i, v in pairs(self.Past) do
-        local barh = v * 40
-        surface.SetDrawColor(self:GetBarColor(v * 100))
-        surface.DrawRect(35 + i * 5, 36 - barh, 5, barh)
-    end
-    surface.SetFont("GModNotify")
-    local _, h = surface.GetTextSize(self.ply:Nick())
-    surface.SetTextColor(Color(255, 255, 255))
-    surface.SetTextPos(40, 40 / 2 - h / 2)
-    surface.DrawText(self.ply:Nick())
+	if IsValid(self) and IsValid(self.ply) then
+    	table.insert(self.Past, self.ply:VoiceVolume())
+    	local len = #self.Past
+    	if len > (42 - 1) then table.remove(self.Past, 1) end
+    	draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0))
+    	for i, v in pairs(self.Past) do
+        	local barh = v * 40
+        	surface.SetDrawColor(self:GetBarColor(v * 100))
+        	surface.DrawRect(35 + i * 5, 36 - barh, 5, barh)
+    	end
+    	surface.SetFont("GModNotify")
+    	local _, h = surface.GetTextSize(self.ply:Nick())
+    	surface.SetTextColor(Color(255, 255, 255))
+    	surface.SetTextPos(40, 40 / 2 - h / 2)
+    	surface.DrawText(self.ply:Nick())
+	else print("v_visualizer:25 - Player is invalid") end
 end
 function PANEL:GetBarColor(p)
     if p >= 70 then
@@ -53,7 +51,7 @@ function PANEL:GetBarColor(p)
     end
 end
 function PANEL:Think()
-    if self:IsValid() then if self.fadeAnim then self.fadeAnim:Run() end end
+    if self:IsValid() and self.fadeAnim then self.fadeAnim:Run() end
 end
 function PANEL:FadeOut(anim, delta, data)
 	self:SetAlpha(255 - (255 * delta*50))
